@@ -15,6 +15,7 @@
 #include "../encryptDecrypt/Cryption.hpp"
 #include <atomic>
 #include<semaphore.h>
+//k
 
 ProcessManagement::ProcessManagement()
 {
@@ -76,4 +77,7 @@ void ProcessManagement::executeTasks()
 ProcessManagement::~ProcessManagement(){
   munmap(sharedMem,sizeof(SharedMemory));
   shm_unlink(SHM_NAME);
+
+
+  
 }
