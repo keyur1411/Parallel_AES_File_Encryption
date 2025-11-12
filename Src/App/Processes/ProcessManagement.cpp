@@ -15,6 +15,16 @@
 ProcessManagement::ProcessManagement(){}
 bool ProcessManagement::submitToQueue(std::unique_ptr<Task> &task){
   taskQueue.push(std::move(task));
+  // int pid = fork();
+  // if(pid<0){
+  //   return false;
+  // }else if(pid>0){
+  //   std::cout<<"Entering Parent Process"<<std::endl;
+  // }else {
+  //   std::cout<<"Entering Child Process"<<std::endl;
+  //   executeTasks();
+  //   std::cout<<"Exiting Child Process"<<std::endl;
+  // }
   return true;
 }
 void ProcessManagement::executeTasks(){

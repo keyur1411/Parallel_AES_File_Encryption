@@ -2,6 +2,8 @@
 #include "../Processes/Task.hpp"
 #include "../FileHandling/ReadEnv.hpp"
 #include <string>
+#include <ctime>
+#include <iomanip>
 
 int excecuteCryption(const std::string &taskData){
   Task task = Task::fromString(taskData);
@@ -25,5 +27,8 @@ int excecuteCryption(const std::string &taskData){
     }
     task.f_stream.close();
   }
+  std::time_t t = std::time(nullptr);
+  std::tm* now = std::localtime(&t);
+  std::cout<<"Exiting the Encryption/Decryption : "<<std::put_time(now,"%Y-%m-%d %H:%M:%S")<<std::endl;
   return 0;
 }
