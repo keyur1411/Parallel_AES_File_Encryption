@@ -1,51 +1,39 @@
-# Compiler
+# Compiler and flags
 CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -g
+INC = -Iinclude
 
-# Compiler flags
-# -g = debug info
-# -Wall = all warnings
-CXXFLAGS = -std=c++17 -g -Wall
+# Linker flags and libraries
+LDFLAGS =
+LIBS = -lssl -lcrypto -lsqlite3 -lpthread
 
-# Include paths
-INCLUDES = -I. \
-           -ISrc/App/encryptDecrypt \
-           -ISrc/App/FileHandling \
-           -ISrc/App/Processes
+# Project name
+TARGET = file_crypter
 
-# List *all* your .cpp source files here
-SRCS = main.cpp \
-       Src/App/FileHandling/IO.cpp \
-       Src/App/FileHandling/ReadEnv.cpp \
-       Src/App/Processes/ProcessManagement.cpp \
-       Src/App/encryptDecrypt/Cryption.cpp
+# --- Automatic File Discovery ---
+# Find all .cpp files in src and its subdirectories
+SRCS = $(shell find src -name '*.cpp')
 
-# Automatically create a list of .o files from the .cpp files
-# (e.g., main.cpp -> main.o)
-OBJS = $(SRCS:.cpp=.o)
+# Generate object file names by replacing src/ with obj/ and .cpp with .o
+OBJS = $(patsubst src/%.cpp, obj/%.o, $(SRCS))
 
-# The name of your final program
-TARGET = my_program
-
-# --- RULES ---
-
-# The default rule (what runs when you just type "make")
-# It depends on the final executable
+# --- Rules ---
 all: $(TARGET)
 
-# Rule to build the final executable
-# It depends on all the object files (.o)
+# Link the program
 $(TARGET): $(OBJS)
-	@echo "Linking..."
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
 
-# Generic rule to compile any .cpp file into a .o file
-# $< is the .cpp file (the dependency)
-# $@ is the .o file (the target)
-%.o: %.cpp
-	@echo "Compiling $<..."
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+# Compile source files into object files
+# This rule creates the object directories (e.g., obj/crypto/) first
+obj/%.o: src/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
 
-# Rule to clean up compiled files
+# Clean up build files
 clean:
 	@echo "Cleaning up..."
-	rm -f $(OBJS) $(TARGET)
+	rm -rf obj $(TARGET)
+
+# Phony targets
+.PHONY: all clean
