@@ -45,6 +45,7 @@ bool DatabaseLogger::init()
   void DatabaseLogger::log(const std::string &filename, const std::string &operation,
                            const std::string &status, double time_ms)
   {
+    std::lock_guard<std::mutex> lock(m_log_mutex);
     char *errMsg = 0;
     if (!m_db)
     {

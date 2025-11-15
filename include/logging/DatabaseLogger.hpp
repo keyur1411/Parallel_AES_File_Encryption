@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <mutex>
 #include <sqlite3.h>
 
 class DatabaseLogger {
@@ -19,4 +20,5 @@ public:
 private:
     std::string m_db_path;
     sqlite3* m_db; // We'll manage the db connection here
+    std::mutex m_log_mutex;
 };
