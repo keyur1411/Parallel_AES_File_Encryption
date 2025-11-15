@@ -6,7 +6,7 @@
 test_gen_script.cpp
 test_gen_script.exe
 #Database
-.db
+*.db
 # Executable
 my_program
 my_program.exe
