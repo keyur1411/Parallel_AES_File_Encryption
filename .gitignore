@@ -1,9 +1,12 @@
+#Learning
+/learning
 #Test
 /Test
 #Test Script
 test_gen_script.cpp
 test_gen_script.exe
-
+#Database
+.db
 # Executable
 my_program
 my_program.exe
