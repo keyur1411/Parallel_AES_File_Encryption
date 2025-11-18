@@ -2,6 +2,7 @@
 #include <string>
 #include <chrono>
 #include <cstdio> // For std::remove, std::rename
+#include <filesystem> // For std::filesystem::file_size
 
 // Project Headers
 #include "crypto/CryptoPipeline.hpp"
@@ -12,7 +13,7 @@
 int main() {
 
     //Checking for Database
-    DatabaseLogger logger("file_log.db"); // Create object
+    DatabaseLogger logger("newdb.db"); // Create object
     if (!logger.init()) { // Call method
         std::cerr << "Failed to initialize logging database. Exiting." << std::endl;
         return 1;
@@ -25,14 +26,17 @@ int main() {
     std::string testFilename;
     std::cout << "Enter the path to your file (e.g., 'image.jpg'): ";
     std::getline(std::cin, testFilename);
-
+    std::string ftype="";
     std::ifstream checkFile(testFilename, std::ios::binary);
     if (!checkFile) {
         std::cerr << "Error: File not found '" << testFilename << "'" << std::endl;
-        logger.log(testFilename, "FILE_NOT_FOUND", "FAILED", 0); // Use object
+        logger.log(testFilename, "FILE_NOT_FOUND", "FAILED", 0,0,ftype); // Use object
         return 1;
     }
     checkFile.close();
+
+    long long fsize = std::filesystem::file_size(std::filesystem::path(testFilename)); 
+    ftype = std::filesystem::path(testFilename).extension().string();
 
     std::string tempFilename = testFilename + ".tmp";
     const unsigned char key[16] = "keyurkumarkanja";
@@ -59,7 +63,7 @@ int main() {
 
     } else {
         std::cerr << "Invalid mode. Please run again and enter 'e' or 'd'." << std::endl;
-        logger.log(testFilename, "INVALID_MODE", "FAILED", 0); // Use object
+        logger.log(testFilename, "INVALID_MODE", "FAILED", 0,fsize,ftype); // Use object
         return 1;
     }
 
@@ -78,7 +82,8 @@ int main() {
         std::cerr << "Operation failed." << std::endl;
     }
 
-    logger.log(testFilename, operation, status, duration_ms.count()); // Use object
+    std::cout<<fsize<<" "<<ftype<<std::endl;
+    logger.log(testFilename, operation, status, duration_ms.count(),fsize,ftype); // Use object
     std::cout << "Operation logged to 'file_log.db' (" << status << ", " << duration_ms.count() << " ms)." << std::endl;
 
     return success ? 0 : 1;

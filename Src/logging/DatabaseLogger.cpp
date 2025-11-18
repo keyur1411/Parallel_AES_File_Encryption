@@ -30,7 +30,9 @@ bool DatabaseLogger::init()
       "  filename TEXT NOT NULL,"
       "  operation TEXT NOT NULL," // e.g., "ENCRYPT", "DECRYPT"
       "  status TEXT NOT NULL,"    // e.g., "SUCCESS", "FAILED"
-      "  processing_time_ms REAL"
+      "  processing_time_ms REAL,"
+      "  file_type TEXT,"
+      "file_size_kb INTEGER"
       ");";
 
   rc = sqlite3_exec(m_db, sql, 0, 0, &errMsg); // Use m_db
@@ -43,7 +45,7 @@ bool DatabaseLogger::init()
   return true;
 }
   void DatabaseLogger::log(const std::string &filename, const std::string &operation,
-                           const std::string &status, double time_ms)
+                           const std::string &status, double time_ms,long long fsize,std::string &ftype)
   {
     char *errMsg = 0;
     if (!m_db)
@@ -53,12 +55,15 @@ bool DatabaseLogger::init()
     }
 
     char *sql = sqlite3_mprintf(
-        "INSERT INTO file_logs (filename, operation, status, processing_time_ms) "
-        "VALUES (%Q, %Q, %Q, %f);",
+        "INSERT INTO file_logs (filename,operation, status, processing_time_ms,file_type,file_size_kb) "
+        "VALUES (%Q,%Q, %Q, %f,%Q,%lld);",
         filename.c_str(),
         operation.c_str(),
         status.c_str(),
-        time_ms);
+        time_ms,
+        ftype.c_str(),
+        (fsize/1024)
+      );
 
     int rc = sqlite3_exec(m_db, sql, 0, 0, &errMsg); // Use m_db
     if (rc != SQLITE_OK)

@@ -14,7 +14,7 @@ public:
 
     bool init();
     void log(const std::string& filename, const std::string& operation,
-             const std::string& status, double time_ms);
+             const std::string& status, double time_ms,long long fsize,std::string &ftype);
 
 private:
     std::string m_db_path;
