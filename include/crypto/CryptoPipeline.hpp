@@ -8,7 +8,7 @@
 
 class CryptoPipeline {
 public:
-    CryptoPipeline(size_t chunk_size = 4096, size_t queue_size = 20);
+    CryptoPipeline(size_t chunk_size = 4194304*2, size_t queue_size = 10);
     ~CryptoPipeline(); // Good practice
 
     // These are our main public functions
